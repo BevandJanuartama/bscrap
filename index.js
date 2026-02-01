@@ -1,10 +1,17 @@
 const express = require("express");
 const axios = require("axios");
 const cheerio = require("cheerio");
+const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3000; // 1. Gunakan process.env.PORT agar Vercel bisa mengatur port-nya
 
-app.use(express.static("public"));
+// Menggunakan path absolut agar Vercel tidak bingung mencari folder public
+app.use(express.static(path.join(__dirname, "public")));
+
+// Tambahkan ini agar saat akses domain utama langsung muncul index.html
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
 async function scrapeFullData(targetUrl) {
   console.log(`[LOG] Memulai scraping untuk: ${targetUrl}`);
