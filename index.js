@@ -2,7 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const cheerio = require("cheerio");
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000; // 1. Gunakan process.env.PORT agar Vercel bisa mengatur port-nya
 
 app.use(express.static("public"));
 
@@ -11,12 +11,11 @@ async function scrapeFullData(targetUrl) {
   try {
     const { data } = await axios.get(targetUrl, {
       headers: { "User-Agent": "Mozilla/5.0" },
-      timeout: 10000, // Maksimal 10 detik
+      timeout: 10000,
     });
     const $ = cheerio.load(data);
     const originUrl = new URL(targetUrl).origin;
 
-    // Nama file: test-com-halaman.txt
     let rawName = targetUrl.replace(/^https?:\/\//, "");
     let fileName =
       rawName
@@ -61,14 +60,13 @@ async function scrapeFullData(targetUrl) {
   }
 }
 
-// ROUTE API
 app.get("/api/process", async (req, res) => {
   const url = req.query.url;
   if (!url) return res.status(400).json({ error: "URL required" });
 
   try {
     const result = await scrapeFullData(url);
-    res.json(result); // WAJIB JSON
+    res.json(result);
   } catch (err) {
     res
       .status(500)
@@ -76,8 +74,13 @@ app.get("/api/process", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`\n🚀 Server Scraper Bepann siap!`);
-  console.log(`👉 Akses di: http://localhost:${PORT}`);
-  console.log(`--------------------------------------`);
-});
+// 2. Bungkus app.listen agar tidak mengganggu proses Serverless di Vercel
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => {
+    console.log(`\n🚀 Server Scraper Bepann siap!`);
+    console.log(`👉 Akses di: http://localhost:${PORT}`);
+  });
+}
+
+// 3. WAJIB: Export app untuk Vercel
+module.exports = app;
