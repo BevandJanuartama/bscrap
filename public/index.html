@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bepann Scraper v2.1 | Data Intelligence</title>
+    <title>B'scrapp | Data Intelligence</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <style>
         :root {
@@ -29,11 +29,9 @@
             overflow: hidden;
         }
 
-        /* Latar belakang dekoratif */
         .glow-sphere {
             position: absolute;
-            width: 300px;
-            height: 300px;
+            width: 300px; height: 300px;
             background: var(--primary);
             filter: blur(150px);
             opacity: 0.1;
@@ -41,151 +39,59 @@
             border-radius: 50%;
         }
 
-        .container {
-            width: 100%;
-            max-width: 500px;
-            padding: 20px;
-            animation: fadeIn 0.8s ease-out;
-        }
+        .container { width: 100%; max-width: 500px; padding: 20px; animation: fadeIn 0.8s ease-out; }
 
         .card {
             background: var(--glass);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             padding: 48px;
             border-radius: 24px;
             border: 1px solid var(--border);
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             text-align: center;
-            position: relative;
         }
 
-        .badge {
-            background: rgba(35, 134, 54, 0.15);
-            color: var(--primary);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 16px;
-            display: inline-block;
-        }
+        h1 { font-size: 28px; font-weight: 800; margin: 0; background: linear-gradient(to right, #fff, #8b949e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        h1 {
-            font-size: 28px;
-            font-weight: 800;
-            margin: 0 0 10px 0;
-            background: linear-gradient(to right, #fff, #8b949e);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        .subtitle { color: #8b949e; font-size: 14px; margin-bottom: 32px; }
 
-        p.subtitle {
-            color: #8b949e;
-            font-size: 14px;
-            margin-bottom: 32px;
-        }
-
-        .input-group {
-            position: relative;
-            margin-bottom: 24px;
-        }
+        .input-group { margin-bottom: 24px; }
 
         input {
-            width: 100%;
-            padding: 14px 16px;
-            box-sizing: border-box;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            background: rgba(13, 17, 23, 0.8);
-            color: white;
-            font-size: 15px;
-            outline: none;
-            transition: all 0.3s;
+            width: 100%; padding: 14px 16px; box-sizing: border-box; border-radius: 12px;
+            border: 1px solid var(--border); background: rgba(13, 17, 23, 0.8);
+            color: white; outline: none; transition: all 0.3s;
         }
 
-        input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(63, 177, 83, 0.2);
-        }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(63, 177, 83, 0.2); }
 
         .btn-process {
-            background: var(--primary);
-            color: white;
-            padding: 14px;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            width: 100%;
-            font-weight: 700;
-            font-size: 16px;
-            transition: transform 0.2s, background 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            background: var(--primary); color: white; padding: 14px; border: none;
+            border-radius: 12px; cursor: pointer; width: 100%; font-weight: 700;
+            display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s;
         }
 
-        .btn-process:hover {
-            background: #4cd166;
-            transform: translateY(-2px);
-        }
+        .btn-process:hover { background: #4cd166; transform: translateY(-2px); }
+        .btn-process:disabled { background: #234d2b; cursor: not-allowed; transform: none; }
 
-        .btn-process:disabled {
-            background: #234d2b;
-            cursor: not-allowed;
-            transform: none;
-        }
+        #status { margin-top: 20px; font-size: 13px; min-height: 20px; transition: all 0.3s; }
 
         .btn-download {
-            display: none;
-            background: var(--accent);
-            color: white;
-            padding: 14px;
-            border-radius: 12px;
-            cursor: pointer;
-            width: 100%;
-            font-weight: 700;
-            margin-top: 16px;
-            text-decoration: none;
-            box-sizing: border-box;
-            animation: slideUp 0.4s ease-out;
+            display: none; background: var(--accent); color: white; padding: 14px;
+            border-radius: 12px; cursor: pointer; width: 100%; font-weight: 700;
+            margin-top: 16px; text-decoration: none; box-sizing: border-box; text-align: center;
         }
 
-        #status {
-            margin-top: 24px;
-            color: #8b949e;
-            font-size: 13px;
-            min-height: 20px;
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        /* Logic Animasi Waiting (Loader) */
         .loader {
-            width: 18px;
-            height: 18px;
-            border: 2px solid #ffffff;
-            border-bottom-color: transparent;
-            border-radius: 50%;
-            display: none;
+            width: 18px; height: 18px;
+            border: 2px solid #ffffff; border-bottom-color: transparent;
+            border-radius: 50%; display: none;
             animation: rotation 1s linear infinite;
         }
 
-        @keyframes rotation {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -196,17 +102,18 @@
 <div class="container">
     <div class="card">
         <h1>B'scrapp</h1>
-        <p class="subtitle">Ekstrak data dari website mana pun secara instan dan rapi.</p>
+        <p class="subtitle">Ekstrak data website secara instan dan rapi.</p>
         
         <div class="input-group">
-            <input type="text" id="urlInput" placeholder="https://contoh-website.com" >
+            <input type="text" id="urlInput" placeholder="https://contoh-website.com">
         </div>
         
         <button id="btnAction" class="btn-process" onclick="startProcess()">
             <span id="btnText">Mulai Ekstraksi</span>
             <div id="loader" class="loader"></div>
         </button>
-        
+
+        <div id="status"></div> 
         
         <a id="downloadLink" class="btn-download">
             <i class="fa-solid fa-cloud-arrow-down"></i> Simpan Hasil (.txt)
@@ -225,19 +132,36 @@
 
         if(!url) return alert("Silakan masukkan URL tujuan!");
 
-        // UI Feedback
-        status.innerHTML = "✨ <span style='color: #58a6ff'>Menganalisis struktur halaman...</span>";
+        // --- Logic Animasi Waiting Dimulai ---
+        status.innerHTML = "✨ <span style='color: #58a6ff'>Menghubungi server Bepann...</span>";
         btnAction.disabled = true;
         btnText.innerText = "Memproses...";
         loader.style.display = "inline-block";
         downloadLink.style.display = "none";
 
+        // Simulasi pesan berganti agar user tidak bosan
+        const waitingTexts = [
+            "Menganalisis struktur HTML...",
+            "Membersihkan script & gaya...",
+            "Mengumpulkan daftar link...",
+            "Menyusun file teks..."
+        ];
+        let textIdx = 0;
+        const interval = setInterval(() => {
+            if(btnAction.disabled) {
+                status.innerHTML = "⏳ <span style='color: #8b949e'>" + waitingTexts[textIdx % waitingTexts.length] + "</span>";
+                textIdx++;
+            } else {
+                clearInterval(interval);
+            }
+        }, 2000);
+        // --- Akhir Logic Animasi Waiting ---
+
         try {
-            // Simulasi fetch API (sesuaikan dengan backend kamu)
             const response = await fetch(`/api/process?url=${encodeURIComponent(url)}`);
             const data = await response.json();
 
-            if(data.error) throw new Error(data.error);
+            if(!response.ok || data.error) throw new Error(data.error || "Gagal mengambil data");
 
             const blob = new Blob([data.fileContent], { type: 'text/plain' });
             const downloadUrl = window.URL.createObjectURL(blob);
@@ -250,12 +174,12 @@
         } catch (err) {
             status.innerHTML = "❌ <span style='color: #f85149'>Gagal: " + err.message + "</span>";
         } finally {
+            clearInterval(interval);
             btnAction.disabled = false;
             btnText.innerText = "Mulai Ekstraksi";
             loader.style.display = "none";
         }
     }
 </script>
-
 </body>
 </html>
