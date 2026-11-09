@@ -1,185 +1,540 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#030608">
+    <meta name="description" content="B'scrapp - Website Data Intelligence">
+
     <title>B'scrapp | Data Intelligence</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
     <style>
         :root {
             --primary: #3fb153;
             --accent: #1f6feb;
             --bg: #030608;
-            --glass: rgba(22, 27, 34, 0.7);
-            --border: rgba(48, 54, 61, 1);
+            --glass: rgba(22, 27, 34, 0.75);
+            --border: #30363d;
+            --text: #e6edf3;
+            --muted: #8b949e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-            background-color: var(--bg);
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(35, 134, 54, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(31, 111, 235, 0.05) 0%, transparent 40%);
-            color: #e6edf3;
+            font-family: Inter, "Segoe UI", sans-serif;
+            background: var(--bg);
+            background-image:
+                radial-gradient(
+                    circle at 10% 20%,
+                    rgba(35, 134, 54, 0.08),
+                    transparent 40%
+                ),
+                radial-gradient(
+                    circle at 90% 80%,
+                    rgba(31, 111, 235, 0.08),
+                    transparent 40%
+                );
+
+            color: var(--text);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            overflow: hidden;
+            padding: 24px;
+            overflow-x: hidden;
         }
 
         .glow-sphere {
-            position: absolute;
-            width: 300px; height: 300px;
+            position: fixed;
+            width: 300px;
+            height: 300px;
             background: var(--primary);
             filter: blur(150px);
-            opacity: 0.1;
-            z-index: -1;
+            opacity: 0.12;
             border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
         }
 
-        .container { width: 100%; max-width: 500px; padding: 20px; animation: fadeIn 0.8s ease-out; }
+        .container {
+            width: 100%;
+            max-width: 520px;
+            animation: fadeIn 0.7s ease-out;
+        }
 
         .card {
             background: var(--glass);
-            backdrop-filter: blur(12px);
-            padding: 48px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 42px;
             border-radius: 24px;
             border: 1px solid var(--border);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            background: rgba(63, 177, 83, 0.12);
+            border: 1px solid rgba(63, 177, 83, 0.3);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--primary);
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        h1 {
+            font-size: 30px;
+            font-weight: 800;
+            background: linear-gradient(to right, #fff, #8b949e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 34px;
+            line-height: 1.6;
+        }
+
+        .section-label {
+            display: block;
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(13, 17, 23, 0.9);
+            color: white;
+            outline: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        input::placeholder {
+            color: #59636e;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(63, 177, 83, 0.15);
+        }
+
+        .btn-process {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            transition: 0.2s;
+        }
+
+        .btn-process:hover {
+            background: #4cd166;
+            transform: translateY(-2px);
+        }
+
+        .btn-process:disabled {
+            background: #234d2b;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loader {
+            width: 17px;
+            height: 17px;
+            border: 2px solid white;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            display: none;
+            animation: rotation 0.8s linear infinite;
+        }
+
+        #status {
+            margin-top: 22px;
+            font-size: 13px;
+            min-height: 20px;
+            text-align: center;
+            line-height: 1.6;
+            color: var(--muted);
+            overflow-wrap: anywhere;
+        }
+
+        .stats {
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        .stat-box {
+            background: rgba(13, 17, 23, 0.8);
+            border: 1px solid var(--border);
+            padding: 14px 8px;
+            border-radius: 12px;
             text-align: center;
         }
 
-        h1 { font-size: 28px; font-weight: 800; margin: 0; background: linear-gradient(to right, #fff, #8b949e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        .subtitle { color: #8b949e; font-size: 14px; margin-bottom: 32px; }
-
-        .input-group { margin-bottom: 24px; }
-
-        input {
-            width: 100%; padding: 14px 16px; box-sizing: border-box; border-radius: 12px;
-            border: 1px solid var(--border); background: rgba(13, 17, 23, 0.8);
-            color: white; outline: none; transition: all 0.3s;
+        .stat-number {
+            display: block;
+            color: var(--primary);
+            font-size: 20px;
+            font-weight: 800;
         }
 
-        input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(63, 177, 83, 0.2); }
-
-        .btn-process {
-            background: var(--primary); color: white; padding: 14px; border: none;
-            border-radius: 12px; cursor: pointer; width: 100%; font-weight: 700;
-            display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s;
+        .stat-label {
+            display: block;
+            color: var(--muted);
+            font-size: 10px;
+            margin-top: 5px;
         }
-
-        .btn-process:hover { background: #4cd166; transform: translateY(-2px); }
-        .btn-process:disabled { background: #234d2b; cursor: not-allowed; transform: none; }
-
-        #status { margin-top: 20px; font-size: 13px; min-height: 20px; transition: all 0.3s; }
 
         .btn-download {
-            display: none; background: var(--accent); color: white; padding: 14px;
-            border-radius: 12px; cursor: pointer; width: 100%; font-weight: 700;
-            margin-top: 16px; text-decoration: none; box-sizing: border-box; text-align: center;
+            display: none;
+            background: var(--accent);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 700;
+            margin-top: 18px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 14px;
+            transition: 0.2s;
         }
 
-        /* Logic Animasi Waiting (Loader) */
-        .loader {
-            width: 18px; height: 18px;
-            border: 2px solid #ffffff; border-bottom-color: transparent;
-            border-radius: 50%; display: none;
-            animation: rotation 1s linear infinite;
+        .btn-download:hover {
+            background: #388bfd;
+            transform: translateY(-2px);
         }
 
-        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 28px 0 20px;
+        }
+
+        .footer {
+            text-align: center;
+            color: #59636e;
+            font-size: 11px;
+        }
+
+        .footer span {
+            color: var(--primary);
+        }
+
+        @keyframes rotation {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 28px 22px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+        }
     </style>
 </head>
+
 <body>
 
-<div class="glow-sphere" style="top: 20%; left: 30%;"></div>
-<div class="glow-sphere" style="bottom: 20%; right: 30%;"></div>
+    <div class="glow-sphere" style="top: 10%; left: 15%;"></div>
+    <div class="glow-sphere" style="bottom: 10%; right: 15%;"></div>
 
-<div class="container">
-    <div class="card">
-        <h1>B'scrapp</h1>
-        <p class="subtitle">Ekstrak data website secara instan dan rapi.</p>
-        
-        <div class="input-group">
-            <input type="text" id="urlInput" placeholder="https://contoh-website.com">
+    <main class="container">
+
+        <div class="card">
+
+            <div class="brand">
+                <div class="brand-icon">B</div>
+                <h1>B'scrapp</h1>
+            </div>
+
+            <p class="subtitle">
+                Data Intelligence Platform
+                <br>
+                Ekstrak data website secara instan dan terstruktur.
+            </p>
+
+            <div class="input-group">
+                <label class="section-label" for="urlInput">
+                    TARGET WEBSITE
+                </label>
+
+                <input
+                    type="url"
+                    id="urlInput"
+                    placeholder="https://contoh-website.com"
+                    autocomplete="url"
+                    required
+                >
+            </div>
+
+            <button
+                id="btnAction"
+                class="btn-process"
+                type="button"
+            >
+                <span id="btnText">Mulai Ekstraksi</span>
+                <div id="loader" class="loader"></div>
+            </button>
+
+            <div id="status" role="status" aria-live="polite">
+                Masukkan URL website untuk memulai.
+            </div>
+
+            <div id="stats" class="stats">
+
+                <div class="stat-box">
+                    <span id="linkCount" class="stat-number">0</span>
+                    <span class="stat-label">INTERNAL LINKS</span>
+                </div>
+
+                <div class="stat-box">
+                    <span id="imageCount" class="stat-number">0</span>
+                    <span class="stat-label">IMAGES</span>
+                </div>
+
+                <div class="stat-box">
+                    <span id="charCount" class="stat-number">0</span>
+                    <span class="stat-label">CHARACTERS</span>
+                </div>
+
+            </div>
+
+            <a
+                id="downloadLink"
+                class="btn-download"
+                href="#"
+                download
+            >
+                ↓ &nbsp; Download Hasil (.txt)
+            </a>
+
+            <div class="divider"></div>
+
+            <div class="footer">
+                Powered by <span>Bepann</span>
+                &nbsp;|&nbsp; B'scrapp v1.0
+            </div>
+
         </div>
-        
-        <button id="btnAction" class="btn-process" onclick="startProcess()">
-            <span id="btnText">Mulai Ekstraksi</span>
-            <div id="loader" class="loader"></div>
-        </button>
 
-        <div id="status"></div> 
-        
-        <a id="downloadLink" class="btn-download">
-            <i class="fa-solid fa-cloud-arrow-down"></i> Simpan Hasil (.txt)
-        </a>
-    </div>
-</div>
+    </main>
 
-<script>
-    async function startProcess() {
-        const url = document.getElementById('urlInput').value;
-        const status = document.getElementById('status');
-        const btnAction = document.getElementById('btnAction');
-        const btnText = document.getElementById('btnText');
-        const loader = document.getElementById('loader');
-        const downloadLink = document.getElementById('downloadLink');
+    <script>
+        const urlInput = document.getElementById("urlInput");
+        const btnAction = document.getElementById("btnAction");
+        const btnText = document.getElementById("btnText");
+        const loader = document.getElementById("loader");
+        const status = document.getElementById("status");
+        const downloadLink = document.getElementById("downloadLink");
+        const stats = document.getElementById("stats");
 
-        if(!url) return alert("Silakan masukkan URL tujuan!");
+        let downloadUrl = null;
+        let loadingInterval = null;
 
-        // --- Logic Animasi Waiting Dimulai ---
-        status.innerHTML = "✨ <span style='color: #58a6ff'>Menghubungi server Bepann...</span>";
-        btnAction.disabled = true;
-        btnText.innerText = "Memproses...";
-        loader.style.display = "inline-block";
-        downloadLink.style.display = "none";
-
-        // Simulasi pesan berganti agar user tidak bosan
         const waitingTexts = [
             "Menganalisis struktur HTML...",
-            "Membersihkan script & gaya...",
-            "Mengumpulkan daftar link...",
+            "Mengumpulkan informasi website...",
+            "Mengekstrak daftar link...",
+            "Mengumpulkan daftar gambar...",
             "Menyusun file teks..."
         ];
-        let textIdx = 0;
-        const interval = setInterval(() => {
-            if(btnAction.disabled) {
-                status.innerHTML = "⏳ <span style='color: #8b949e'>" + waitingTexts[textIdx % waitingTexts.length] + "</span>";
-                textIdx++;
-            } else {
-                clearInterval(interval);
-            }
-        }, 2000);
-        // --- Akhir Logic Animasi Waiting ---
 
-        try {
-            const response = await fetch(`/api/process?url=${encodeURIComponent(url)}`);
-            const data = await response.json();
-
-            if(!response.ok || data.error) throw new Error(data.error || "Gagal mengambil data");
-
-            const blob = new Blob([data.fileContent], { type: 'text/plain' });
-            const downloadUrl = window.URL.createObjectURL(blob);
-            
-            downloadLink.href = downloadUrl;
-            downloadLink.download = data.fileName; 
-            downloadLink.style.display = "block";
-            
-            status.innerHTML = "✅ <span style='color: var(--primary)'>Data berhasil dikumpulkan!</span>";
-        } catch (err) {
-            status.innerHTML = "❌ <span style='color: #f85149'>Gagal: " + err.message + "</span>";
-        } finally {
-            clearInterval(interval);
-            btnAction.disabled = false;
-            btnText.innerText = "Mulai Ekstraksi";
-            loader.style.display = "none";
+        function setStatus(message, color) {
+            status.textContent = message;
+            status.style.color = color;
         }
-    }
-</script>
+
+        function resetDownload() {
+            if (downloadUrl) {
+                URL.revokeObjectURL(downloadUrl);
+                downloadUrl = null;
+            }
+
+            downloadLink.style.display = "none";
+            stats.style.display = "none";
+        }
+
+        async function startProcess() {
+            const url = urlInput.value.trim();
+
+            if (!url) {
+                setStatus("Silakan masukkan URL website.", "#f85149");
+                urlInput.focus();
+                return;
+            }
+
+            let parsedUrl;
+
+            try {
+                parsedUrl = new URL(url);
+
+                if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+                    throw new Error();
+                }
+            } catch {
+                setStatus("Format URL tidak valid.", "#f85149");
+                return;
+            }
+
+            if (btnAction.disabled) return;
+
+            resetDownload();
+
+            btnAction.disabled = true;
+            btnText.textContent = "Memproses...";
+            loader.style.display = "block";
+
+            let textIndex = 0;
+
+            setStatus("Menghubungi server B'scrapp...", "#58a6ff");
+
+            loadingInterval = setInterval(() => {
+                setStatus(
+                    waitingTexts[textIndex % waitingTexts.length],
+                    "#8b949e"
+                );
+
+                textIndex++;
+            }, 2200);
+
+            
+            try {
+                const response = await fetch(
+                    `/api/process?url=${encodeURIComponent(url)}`
+                );
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    throw new Error(
+                        data.error || "Gagal mengambil data website."
+                    );
+                }
+
+                if (typeof data.fileContent !== "string") {
+                    throw new Error("Konten hasil scraping tidak valid.");
+                }
+
+                const statistics = data.statistics || {
+                    links: 0,
+                    images: 0,
+                    characters: data.fileContent.length
+                };
+
+                // Tampilkan statistik
+                document.getElementById("linkCount").textContent =
+                    (statistics.links ?? 0).toLocaleString("id-ID");
+
+                document.getElementById("imageCount").textContent =
+                    (statistics.images ?? 0).toLocaleString("id-ID");
+
+                document.getElementById("charCount").textContent =
+                    (statistics.characters ?? 0).toLocaleString("id-ID");
+
+                // Tampilkan bagian statistik
+                document.getElementById("stats").style.display = "grid";
+
+                // Buat file TXT
+                const blob = new Blob(
+                    [data.fileContent],
+                    { type: "text/plain;charset=utf-8" }
+                );
+
+                const downloadUrl = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+
+                link.href = downloadUrl;
+                link.download = data.fileName || "hasil-scraping.txt";
+
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+
+                URL.revokeObjectURL(downloadUrl);
+
+            } catch (error) {
+                console.error(error);
+                alert("Gagal: " + error.message);
+            }
+
+        }
+
+        btnAction.addEventListener("click", startProcess);
+
+        urlInput.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                startProcess();
+            }
+        });
+
+        window.addEventListener("beforeunload", () => {
+            clearInterval(loadingInterval);
+
+            if (downloadUrl) {
+                URL.revokeObjectURL(downloadUrl);
+            }
+        });
+    </script>
+
 </body>
 </html>
