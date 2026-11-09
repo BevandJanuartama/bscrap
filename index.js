@@ -8,11 +8,11 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(process.cwd(), "public")));
 
 // Route utama untuk frontend
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.sendFile(path.join(process.cwd(), "public", "index.html"));
 });
 
 // Fungsi Scraper Utama
@@ -90,7 +90,6 @@ app.get("/api/process", async (req, res) => {
     const result = await scrapeFullData(url);
     res.json({ success: true, ...result });
   } catch (err) {
-    // Memastikan error selalu dikirim dalam format JSON, bukan HTML
     res.status(500).json({
       success: false,
       error: err.message,
@@ -98,7 +97,7 @@ app.get("/api/process", async (req, res) => {
   }
 });
 
-// Middleware Global Error Handler (Mencegah HTML Error Terkirim ke Klien)
+// Middleware Global Error Handler
 app.use((err, req, res, next) => {
   res.status(500).json({
     success: false,
@@ -106,7 +105,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Jalankan server jika bukan di environment production (seperti Vercel)
+// Jalankan server lokal jika bukan di production
 if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, () =>
     console.log(`🚀 Server bvscrapper running on port ${PORT}`),
